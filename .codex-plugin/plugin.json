@@ -1,0 +1,41 @@
+{
+  "name": "goal-tetris",
+  "version": "0.1.0",
+  "description": "Turn Codex goals and milestones into animated, stackable Tetris boards.",
+  "author": {
+    "name": "Goal Tetris"
+  },
+  "homepage": "https://openai.devpost.com/",
+  "repository": "https://github.com/",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "developer-tools",
+    "productivity",
+    "tetris",
+    "progress"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Goal Tetris",
+    "shortDescription": "Build features, one block at a time",
+    "longDescription": "Goal Tetris connects to a Codex session and turns each requested feature into its own Tetris map. Meaningful milestones become tetrominoes that fall into place as Codex works.",
+    "developerName": "Goal Tetris",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Track this feature with Goal Tetris.",
+      "Show my current Goal Tetris boards.",
+      "Update Goal Tetris with the latest milestone."
+    ],
+    "brandColor": "#6D5EF5",
+    "composerIcon": "./assets/thumbnail.png",
+    "logo": "./assets/thumbnail.png",
+    "screenshots": []
+  }
+}

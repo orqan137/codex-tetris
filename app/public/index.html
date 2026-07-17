@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Goal Tetris</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <div class="eyebrow">CODEX SESSION COMPANION</div>
+          <h1>Goal <span>Tetris</span></h1>
+          <p>Turn each requested feature into its own board. Meaningful milestones fall into place as Codex works.</p>
+        </div>
+        <div class="connection"><i></i><span>SESSION BRIDGE ACTIVE</span></div>
+      </header>
+
+      <section class="composer panel">
+        <div class="panel-heading"><div><div class="eyebrow">NEW FEATURE</div><h2>What are we building?</h2></div><button id="reset" class="ghost">Reset boards</button></div>
+        <form id="goal-form">
+          <input id="goal-title" required maxlength="100" placeholder="e.g. Build login functionality" />
+          <button class="primary" type="submit">Create Tetris map <span>↗</span></button>
+        </form>
+        <div class="hint">Codex will break the feature into planning, frontend, backend, testing, and review blocks.</div>
+      </section>
+
+      <section class="summary-row">
+        <div class="stat panel"><span>ACTIVE FEATURES</span><strong id="active-count">0</strong></div>
+        <div class="stat panel"><span>BLOCKS LOCKED</span><strong id="locked-count">0</strong></div>
+        <div class="attention panel"><span>NEXT ATTENTION</span><strong id="attention-text">Waiting for a Codex milestone…</strong></div>
+      </section>
+
+      <section id="boards" class="boards"></section>
+      <div id="empty" class="empty panel"><div class="empty-icon">▦</div><h2>Your feature boards will appear here</h2><p>Create a feature above, or ask Codex to call <code>goal_tetris_start</code>.</p></div>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
