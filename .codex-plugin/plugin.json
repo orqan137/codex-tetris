@@ -36,6 +36,8 @@
     "brandColor": "#6D5EF5",
     "composerIcon": "./assets/thumbnail.png",
     "logo": "./assets/thumbnail.png",
-    "screenshots": []
+    "screenshots": [
+      "./assets/codex-app-popup-mockup.png"
+    ]
   }
 }

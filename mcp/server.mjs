@@ -1,10 +1,21 @@
 import readline from "node:readline";
-import { createGoal, readState, resetState, updateMilestone } from "../lib/state.mjs";
+import { attachSession, createGoal, readState, resetState, updateMilestone } from "../lib/state.mjs";
+import { RESOURCE_URI, widgetHtml } from "./widget.mjs";
 
 const PROTOCOL_VERSION = "2024-11-05";
-const RESOURCE_URI = "ui://goal-tetris/board.html";
 
 const tools = [
+  {
+    name: "goal_tetris_open",
+    description: "Open the native Goal Tetris panel in the current Codex conversation and attach it to this session.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        sessionLabel: { type: "string", description: "Optional label shown in the panel" },
+        sessionId: { type: "string", description: "Optional session identifier supplied by the host" }
+      }
+    }
+  },
   {
     name: "goal_tetris_start",
     description: "Create a Goal Tetris board for a requested feature. Call this once when the user starts tracking a new feature.",
@@ -69,21 +80,21 @@ function result(state, message) {
 }
 
 async function callTool(name, args = {}) {
+  if (name === "goal_tetris_open") {
+    const state = await attachSession({ label: args.sessionLabel, id: args.sessionId });
+    return result(state, `Goal Tetris opened for ${state.session.label}`);
+  }
   if (name === "goal_tetris_start") {
     const goal = await createGoal(args);
-    return result({ goals: [goal] }, `Goal Tetris board created: ${goal.title}`);
+    return result(await readState(), `Goal Tetris board created: ${goal.title}`);
   }
   if (name === "goal_tetris_update") {
     const update = await updateMilestone(args);
-    return result(update, `Goal Tetris updated: ${update.milestone.title} → ${update.milestone.status}`);
+    return result(await readState(), `Goal Tetris updated: ${update.milestone.title} - ${update.milestone.status}`);
   }
   if (name === "goal_tetris_snapshot") return result(await readState(), "Current Goal Tetris snapshot");
   if (name === "goal_tetris_reset") return result(await resetState(), "Goal Tetris boards reset");
   throw new Error(`Unknown tool: ${name}`);
-}
-
-function widgetHtml() {
-  return `<!doctype html><html><body style="font-family:system-ui;background:#0b1026;color:#eef2ff;padding:20px"><h2>Goal Tetris</h2><p>Use the local dashboard at <code>http://localhost:4173</code> to watch feature boards animate.</p></body></html>`;
 }
 
 async function handle(message) {
@@ -97,7 +108,7 @@ async function handle(message) {
   }
   if (message.method === "tools/list") return { tools };
   if (message.method === "resources/list") {
-    return { resources: [{ uri: RESOURCE_URI, name: "Goal Tetris board", mimeType: "text/html" }] };
+    return { resources: [{ uri: RESOURCE_URI, name: "Goal Tetris native Codex panel", mimeType: "text/html" }] };
   }
   if (message.method === "resources/read") {
     return { contents: [{ uri: RESOURCE_URI, mimeType: "text/html", text: widgetHtml() }] };
