@@ -38,6 +38,14 @@ npm start
 
 Then open `http://localhost:4173`. The dashboard and installed plugin copy share `~/.goal-tetris/state.json`.
 
+For a manual bridge while developing against an already-open Codex task, seed the shared state with its host-provided task ID:
+
+```bash
+node scripts/attach-session.mjs <codex-task-id> "Current Codex plugin integration"
+```
+
+This is only a development fallback. In a loaded plugin task, the `goal_tetris_open` tool performs the same attachment from inside Codex.
+
 ## Plugin files
 
 - `.codex-plugin/plugin.json` - plugin manifest and Codex UI assets
