@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node app/server.mjs",
+    "start:detached": "node scripts/start-dashboard.mjs",
     "mcp": "node mcp/server.mjs"
   }
 }
