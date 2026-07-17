@@ -6,7 +6,7 @@ Goal Tetris is a native Codex plugin for the OpenAI Build Week Developer Tools t
 
 ## Native Codex experience
 
-The primary product surface is the embedded MCP UI resource `ui://goal-tetris/board.html`: a compact dark panel that renders inside Codex with multiple feature boards, falling T/L/I/O/S/Z blocks, a next-action card, session context, and a milestone timeline. There is no pet and no browser window in the plugin experience.
+The primary product surface is the embedded MCP UI resource `ui://goal-tetris/board.v2.html`: a compact dark panel that renders inside Codex with multiple feature boards, falling T/L/I/O/S/Z blocks, a next-action card, session context, and a milestone timeline. There is no pet and no browser window in the plugin experience.
 
 The plugin flow is:
 

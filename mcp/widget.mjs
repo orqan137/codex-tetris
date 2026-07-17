@@ -1,4 +1,5 @@
-export const RESOURCE_URI = "ui://goal-tetris/board.html";
+// Bump the template URI when the embedded markup changes so Codex does not reuse a stale widget.
+export const RESOURCE_URI = "ui://goal-tetris/board.v2.html";
 
 export function widgetHtml() {
   return String.raw`<!doctype html>

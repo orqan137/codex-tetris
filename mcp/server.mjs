@@ -74,7 +74,11 @@ function result(state, message) {
     structuredContent: state,
     _meta: {
       "ui.resourceUri": RESOURCE_URI,
-      "openai/outputTemplate": RESOURCE_URI
+      "openai/outputTemplate": RESOURCE_URI,
+      "openai/widgetAccessible": true,
+      "openai/resultCanProduceWidget": true,
+      "openai/toolInvocation/invoking": "Updating Goal Tetris",
+      "openai/toolInvocation/invoked": "Goal Tetris updated"
     }
   };
 }
@@ -108,10 +112,20 @@ async function handle(message) {
   }
   if (message.method === "tools/list") return { tools };
   if (message.method === "resources/list") {
-    return { resources: [{ uri: RESOURCE_URI, name: "Goal Tetris native Codex panel", mimeType: "text/html" }] };
+    return { resources: [{ uri: RESOURCE_URI, name: "Goal Tetris native Codex panel", mimeType: "text/html+skybridge" }] };
   }
   if (message.method === "resources/read") {
-    return { contents: [{ uri: RESOURCE_URI, mimeType: "text/html", text: widgetHtml() }] };
+    return {
+      contents: [{
+        uri: RESOURCE_URI,
+        mimeType: "text/html+skybridge",
+        text: widgetHtml(),
+        _meta: {
+          "openai/widgetDescription": "A native Codex panel showing one Tetris board per requested feature.",
+          "openai/widgetPrefersBorder": true
+        }
+      }]
+    };
   }
   if (message.method === "tools/call") return callTool(message.params?.name, message.params?.arguments);
   if (message.method === "ping") return {};
