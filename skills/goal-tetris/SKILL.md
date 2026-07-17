@@ -28,4 +28,6 @@ Include a short `summary` and `rationale`. These are user-facing explanations of
 
 When the user asks for the current state, call `goal_tetris_snapshot`. The native panel can refresh its state by calling this tool through the host UI bridge.
 
+When the user communicates in Korean, keep milestone summaries and next actions in Korean. The embedded panel automatically localizes its chrome labels when the host locale is Korean.
+
 The plugin uses explicit milestone calls because passive access to undocumented private Codex session events is not guaranteed. The local dashboard is only a fallback visual harness for development; it is not the primary product surface.
