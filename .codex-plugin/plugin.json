@@ -31,7 +31,10 @@
     "defaultPrompt": [
       "Track this feature with Goal Tetris.",
       "Show my current Goal Tetris boards.",
-      "Update Goal Tetris with the latest milestone."
+      "Update Goal Tetris with the latest milestone.",
+      "이 기능을 Goal Tetris로 추적해줘.",
+      "현재 Goal Tetris 보드를 보여줘.",
+      "최신 마일스톤으로 Goal Tetris를 업데이트해줘."
     ],
     "brandColor": "#6D5EF5",
     "composerIcon": "./assets/thumbnail.png",

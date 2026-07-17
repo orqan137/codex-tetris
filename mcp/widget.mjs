@@ -21,5 +21,41 @@ function render(state){state=unwrap(state);var goals=state.goals||[],boards=docu
 async function refresh(){try{if(window.openai&&window.openai.callTool){var result=await window.openai.callTool("goal_tetris_snapshot",{});render(result)}else{render(window.openai&&window.openai.toolOutput||fallback)}}catch(error){document.getElementById("error").textContent="Could not refresh the Codex session: "+error.message}}
 document.getElementById("refresh").addEventListener("click",refresh);render(window.openai&&window.openai.toolOutput||fallback);if(window.openai&&window.openai.callTool)setInterval(refresh,3000);
 })();
+</script>
+<script>
+(function(){
+  function isKorean(){
+    var locale=(window.openai&&window.openai.locale)||navigator.language||"en";
+    return String(locale).toLowerCase().indexOf("ko")===0;
+  }
+  function setText(selector,value){var node=document.querySelector(selector);if(node)node.textContent=value}
+  function localize(){
+    if(!isKorean())return;
+    setText(".session span:first-child","현재 Codex 세션");
+    setText(".live","실시간");
+    setText(".kicker","Codex 작업공간");
+    setText(".intro h1","기능 진행률");
+    setText(".intro p","Codex가 작업하면 의미 있는 마일스톤이 블록으로 고정됩니다.");
+    setText(".refresh","새로고침");
+    document.querySelectorAll(".queue span").forEach(function(node){node.textContent="다음 블록"});
+    document.querySelectorAll(".timeline-head span:first-child").forEach(function(node){node.textContent="세션 타임라인"});
+    var count=document.getElementById("count");
+    if(count)count.textContent=count.textContent.replace("blocks locked","블록 고정");
+    var next=document.getElementById("next-title");
+    if(next&&next.textContent.indexOf("Next:")===0)next.textContent="다음: "+next.textContent.slice(5);
+    else if(next)next.textContent="다음 작업";
+    var context=document.querySelector(".detail .card:nth-child(2) h2");
+    if(context)context.textContent="세션 정보";
+    document.querySelectorAll(".board-status").forEach(function(node){node.textContent=node.textContent.replace(" locked"," 잠금")});
+    document.querySelectorAll(".board").forEach(function(board){
+      var queue=board.querySelector(".queue b");
+      if(queue&&queue.textContent==="Complete")queue.textContent="완료";
+    });
+    var empty=document.querySelector(".empty");
+    if(empty){var strong=empty.querySelector("strong"),copy=empty.querySelector("p");if(strong)strong.textContent="아직 기능 맵이 없습니다";if(copy)copy.textContent="Codex에게 Goal Tetris로 이 기능을 추적해 달라고 요청하세요."}
+  }
+  localize();
+  setInterval(localize,500);
+})();
 </script></body></html>`;
 }
