@@ -1,6 +1,6 @@
 {
   "name": "goal-tetris",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260719122247",
   "description": "Turn Codex goals and milestones into animated, stackable Tetris boards.",
   "author": {
     "name": "Goal Tetris"
@@ -31,10 +31,7 @@
     "defaultPrompt": [
       "Track this feature with Goal Tetris.",
       "Show my current Goal Tetris boards.",
-      "Update Goal Tetris with the latest milestone.",
-      "이 기능을 Goal Tetris로 추적해줘.",
-      "현재 Goal Tetris 보드를 보여줘.",
-      "최신 마일스톤으로 Goal Tetris를 업데이트해줘."
+      "\uc774 \uae30\ub2a5\uc744 Goal Tetris\ub85c \ucd94\uc801\ud574\uc918."
     ],
     "brandColor": "#6D5EF5",
     "composerIcon": "./assets/thumbnail.png",
