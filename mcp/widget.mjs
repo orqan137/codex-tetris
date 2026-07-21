@@ -102,7 +102,15 @@ export function widgetHtml() {
   }
   function render(raw){
     latest=unwrap(raw);var goals=latest.goals||[],active=goals.filter(function(goal){return goal.status!=="completed"&&!goal.archived}),history=goals.filter(function(goal){return goal.status==="completed"||goal.archived}),list=currentView==="history"?history:active;
-    if(!selectedId||!list.some(function(goal){return goal.id===selectedId}))selectedId=list[0]?list[0].id:null;
+    if(!selectedId){
+      var readyGoal=history.find(function(goal){return goal.status==="completed"&&!goal.lineAcknowledgedAt});
+      if(readyGoal){currentView="history";list=history;selectedId=readyGoal.id}
+      else selectedId=list[0]?list[0].id:null;
+    }else if(!list.some(function(goal){return goal.id===selectedId})){
+      var completedSelection=history.find(function(goal){return goal.id===selectedId&&goal.status==="completed"&&!goal.lineAcknowledgedAt});
+      if(completedSelection&&currentView==="active"){currentView="history";list=history}
+      else selectedId=list[0]?list[0].id:null;
+    }
     document.getElementById("session-label").textContent=(latest.session&&latest.session.label)||"Current Codex session";document.getElementById("session-chip").textContent=TXT.session+" / "+goals.length+" tasks";document.getElementById("active-count").textContent=active.length;document.getElementById("history-count").textContent=history.length;document.getElementById("task-list-title").textContent=currentView==="history"?TXT.previousTasks:TXT.tasks;document.getElementById("task-list-caption").textContent=currentView==="history"?TXT.selectAgain:TXT.select;document.querySelectorAll(".tab").forEach(function(tab){tab.classList.toggle("active",tab.getAttribute("data-view")===currentView)});renderList(list);
     var goal=list.find(function(item){return item.id===selectedId}),selected=document.getElementById("selected-board");selected.innerHTML=goal?boardMarkup(goal):'<div class="empty-list">'+(currentView==="history"?"Select a completed board from Previous work.":"Select a feature from the task list.")+'</div>';
     var done=goals.reduce(function(total,item){return total+(item.milestones||[]).filter(function(m){return m.status==="completed"}).length},0);document.getElementById("locked-count").textContent=done+" "+TXT.blocks+" "+TXT.locked;var next=active.flatMap(function(item){return (item.milestones||[]).map(function(m){return {goal:item,milestone:m}})}).find(function(item){return item.milestone.status==="active"||item.milestone.status==="blocked"||item.milestone.status==="approval"||item.milestone.status==="pending"});document.getElementById("next-action").innerHTML=next?TXT.next+": <b>"+esc(next.milestone.title)+"</b>":"All routed work is complete";
