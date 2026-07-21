@@ -1,6 +1,6 @@
-# Devpost submission pack
+# Devpost submission pack — Goal Tetris
 
-Use the copy below for the public project page. Replace the two marked placeholders after recording the video and retrieving the `/feedback` Session ID.
+This file is a copy-ready English draft for the Devpost project page and judge-only fields. Replace the two bracketed placeholders before submitting: the public YouTube URL and the primary `/feedback` Session ID.
 
 ## Project title
 
@@ -8,123 +8,115 @@ Goal Tetris
 
 ## Elevator pitch
 
-Goal Tetris turns Codex feature milestones into stable, colorful tetrominoes that fall, lock, and clear only after you confirm the completed line.
+Goal Tetris turns meaningful Codex milestones into tetrominoes that fall, lock, and clear only when the developer confirms the completed work.
 
-## Suggested headline
+## Project story
 
-Build the feature. Watch it lock into place.
+### Inspiration
 
-## Project Story
+Long-running coding tasks can become a wall of status messages. Planning, implementation, testing, review, and approval may all be happening at once, but the changes that matter are easy to lose in a conversation.
 
-## Inspiration
+I wanted a progress view that felt more tangible than another checklist. Tetris became the right metaphor: a feature request becomes a route of work, each meaningful milestone becomes a recognizable block, and completed work becomes a line the developer can explicitly acknowledge and clear. The board is playful, but its state needs to be trustworthy: it must not invent progress or make completed work move around.
 
-Long-running coding tasks are difficult to monitor from a stream of status messages. A developer can have a plan, a partial implementation, tests, and an approval decision all moving at once, but the important state changes are easy to lose in the conversation.
+### What I built
 
-I wanted a progress view that felt more tangible than another checklist. Tetris was a natural metaphor: a request becomes a route of work, each meaningful milestone becomes a recognizable block, and completed work becomes a line that the developer can acknowledge and clear. The board is intentionally playful, but the underlying state is serious: it should never invent progress or make already-completed work jump around.
+Goal Tetris is a native Codex plugin for the Developer Tools track. It adds a compact, classic blue arcade-style 10x20 Tetris panel to the current Codex conversation. Each requested feature gets its own board. For example, a login feature can be broken into planning, frontend, backend, testing, review, and approval milestones. Each milestone maps to one of the seven canonical tetrominoes and appears in the NEXT route queue.
 
-## What I built
+The Current work tab shows active feature boards. When every milestone on a board is complete, the panel reserves a full line. That line remains visible until the developer presses **Confirm - Clear line**. The confirmation is recorded in shared state, and the finished board remains available in the Previous work tab.
 
-Goal Tetris is a native Codex plugin for the Developer Tools track. Opening the plugin attaches a compact arcade-style panel to the current Codex conversation. Each requested feature gets its own 10x20 board. A feature such as “add login” can be decomposed into planning, frontend, backend, testing, review, and approval milestones. Each milestone is assigned one of the seven canonical tetrominoes and appears in the route queue on the right.
+### How it works
 
-The current-work tab shows active feature boards. When all milestones for a board are complete, a full line appears and stays visible until the developer presses **Confirm - Clear line**. Only then does the plugin record the acknowledgement and remove the row. Completed boards remain available in the previous-work tab.
+Goal Tetris exposes a small MCP bridge:
 
-## How it works
+- `goal_tetris_open` attaches the board to the current Codex conversation.
+- `goal_tetris_start` creates a feature board with ordered milestones.
+- `goal_tetris_update` records a meaningful milestone change.
+- `goal_tetris_snapshot` refreshes the panel state.
+- `goal_tetris_acknowledge` records the developer's confirmation to clear a completed line.
 
-The plugin exposes a small MCP bridge:
+The panel uses a real bottom-up coordinate model. For every non-pending milestone, it evaluates legal columns, drops the piece until the next move would collide, and locks the piece at the lowest legal position. Placement scoring prefers fewer holes, a lower stack, a smoother surface, and a stable route-column tie breaker. The result feels like Tetris without random placement or reflowing blocks that have already been locked.
 
-- `goal_tetris_open` attaches the board to the current Codex session.
-- `goal_tetris_start` creates a board with ordered milestones.
-- `goal_tetris_update` records meaningful milestone state changes.
-- `goal_tetris_snapshot` refreshes the panel.
-- `goal_tetris_acknowledge` records the developer's confirmation of a completed line.
+Goal Tetris deliberately tracks explicit, meaningful updates from the current conversation. Public plugin APIs do not provide a documented passive subscription to every private Codex event, so the project does not claim to observe unsupported internals. The local dashboard is a development and visual-testing harness; the native Codex panel is the primary experience.
 
-The panel uses a real bottom-up 10x20 coordinate model. For every non-pending milestone, it evaluates legal columns, moves the piece downward until the next move would collide, and locks it at the lowest legal position. Placement scoring prefers fewer holes, lower stack height, and a smoother surface, with a stable route-column tie breaker. This gives the board a Tetris-like landing behavior without random placement or reflowing old blocks when new work arrives.
+### Challenges I ran into
 
-Goal Tetris intentionally tracks explicit meaningful updates from the current conversation. Public plugin APIs do not provide a documented passive subscription to every private Codex event, so the implementation does not pretend to observe undocumented internals. The local dashboard is included as a fallback harness; the primary product surface is the native Codex panel.
+The hardest part was preserving trust in the visual state. A progress visualization becomes misleading if pending work looks finished, completed pieces move when unrelated work arrives, or a completed line disappears without human confirmation. I solved this by making the board a deterministic projection of ordered milestone state and by locking pieces permanently once they land.
 
-## How Codex and GPT-5.6 were used
+I also had to define a clear integration boundary. Explicit bridge calls make the plugin useful with the supported Codex surface, while leaving room for a future documented Codex session-event stream without coupling the project to private host behavior.
 
-Codex was used throughout the build to inspect the plugin boundary, implement the MCP server and embedded UI, iterate on the classic arcade design, debug state transitions, run smoke tests, and review the README.
+### What I learned
 
-GPT-5.6 was used for the meaningful planning pass: turning feature requests into ordered milestones, selecting concise user-facing summaries, and reviewing the routing algorithm and confirmation flow for edge cases. The final repository contains the state model, collision-aware placement code, native panel, and tests so judges can inspect how the behavior works.
+I learned that playful interaction design can still communicate serious operational state when the rules are clear and deterministic. I also learned to treat a native AI-tool integration as a product boundary: show exactly what the system knows, update only on meaningful events, and preserve a user's final confirmation for consequential visual changes.
 
-## What I learned
+### How Codex and GPT-5.6 were used
 
-The hardest part was not drawing a tetromino; it was preserving trust in the visual state. A progress visualization is misleading if pieces move when unrelated work arrives, if a pending task looks complete, or if a completed line disappears without a human confirmation. Treating the board as a deterministic projection of ordered milestone state made the UI easier to reason about and the animation more satisfying.
+Codex was used throughout the build to inspect the plugin host boundary, implement the MCP server and embedded panel, iterate on the arcade UI, debug state transitions, run smoke tests, and review the documentation.
 
-I also learned that a native Codex experience needs a clear boundary. The plugin can be useful today with explicit milestone updates, while leaving room for a future supported session-event stream instead of coupling the product to private host behavior.
+GPT-5.6 was used for the planning pass: decomposing feature requests into ordered milestones, selecting concise user-facing summaries, and reviewing the deterministic routing and confirmation flow for edge cases. The repository includes the state model, collision-aware placement logic, native panel, and smoke tests so judges can inspect the implementation.
 
 ## Built with
 
-OpenAI Codex, GPT-5.6, MCP, Codex native UI, Node.js, JavaScript, HTML, CSS, JSON state, deterministic algorithms, Tetris mechanics, Developer Tools
+OpenAI Codex, GPT-5.6, Model Context Protocol (MCP), Codex native UI, Node.js, JavaScript, React, Vite, HTML, CSS, JSON state, deterministic algorithms, and Tetris mechanics.
 
-## Try it out
+## Try it out links
 
-Source repository: https://github.com/orqan137/codex-tetris
+- Source repository: https://github.com/orqan137/codex-tetris
+- Public demo video: `[PASTE PUBLIC YOUTUBE URL HERE]`
 
-The repository contains the plugin manifest, MCP server, native panel, skill instructions, local fallback harness, screenshots, and smoke tests. For the fallback harness:
+## Project media
+
+Upload these images to the Devpost gallery:
+
+1. `assets/goal-tetris-devpost-thumbnail.png` — the main arcade-style project thumbnail.
+2. `assets/codex-app-popup-mockup.png` — the native Codex panel concept with feature boards and the NEXT queue.
+
+## Video demo script (about 90 seconds)
+
+Long-running Codex work can turn into a wall of status updates. Goal Tetris turns meaningful changes into a board I can scan at a glance.
+
+This is a native panel attached to the current Codex conversation. Each requested feature gets its own 10-by-20 board, and the NEXT route shows its upcoming milestones.
+
+When a milestone changes, its canonical tetromino drops once and locks when the work is complete. Collision-aware placement makes it land like Tetris, while previously locked pieces never jump when later work arrives.
+
+When every milestone is done, the board reserves a full line. It does not clear automatically: the developer must press **Confirm - Clear line**. The acknowledgement is stored, and the completed feature stays available in **Previous work**.
+
+I built the plugin with Codex and used GPT-5.6 for milestone decomposition, concise summaries, and routing edge-case review. The repository includes the MCP bridge, native panel, deterministic placement logic, and smoke tests.
+
+## Additional information for judges and organizers
+
+- **Category:** Developer Tools
+- **Repository URL:** https://github.com/orqan137/codex-tetris
+- **Primary `/feedback` Session ID:** `[PASTE THE PRIMARY CODEX SESSION ID HERE]`
+- **Native plugin path:** Load the repository as a local Codex plugin. The repository root contains `.codex-plugin/plugin.json` and `.mcp.json`.
+- **Native resource:** `ui://goal-tetris/board.v10.html`
+- **Supported platform:** Codex desktop app with Node.js 20+ available to the plugin MCP server.
+- **Credentials:** None required.
+
+### Local visual-testing path
 
 ```bash
 git clone https://github.com/orqan137/codex-tetris.git
 cd codex-tetris
-node app/server.mjs
+npm install
+npm start
 ```
 
-Open `http://localhost:4173` to inspect the state model and test the visual harness. For the native plugin path, load the repository as a local Codex plugin; the package root contains `.codex-plugin/plugin.json` and `.mcp.json`.
+Then open `http://localhost:4173`. The dashboard is a local development harness; the native Codex panel is the primary product surface.
 
-## Project media
+### Smoke test
 
-Upload these files to the Devpost image gallery:
+```bash
+node scripts/smoke-test.mjs
+```
 
-1. `assets/goal-tetris-devpost-thumbnail.png` - final no-mascot arcade thumbnail.
-2. `assets/codex-app-popup-mockup.png` - native Codex popup concept showing multiple feature boards and a next-piece area.
-
-## Video demo link
-
-`[PASTE PUBLIC YOUTUBE URL HERE]`
-
-## 90-second demo script
-
-**0:00-0:10 - The problem**
-
-“Long-running Codex work can become a wall of status updates. Goal Tetris turns the important state changes into a board I can scan in one glance.”
-
-**0:10-0:25 - Open the native panel**
-
-“This is a native panel attached to the current Codex conversation. I can track several requested features in the same session, and the right-hand NEXT route shows the upcoming milestones for the selected feature.”
-
-**0:25-0:50 - Route work into blocks**
-
-“When a milestone becomes active, its canonical tetromino falls once. When the milestone is complete, the block locks. The board uses collision-aware bottom-up placement, so pieces land like Tetris and previously locked pieces do not jump when a later milestone arrives.”
-
-**0:50-1:05 - Complete a feature**
-
-“The panel separates current work from previous work. When every milestone is complete, the board reserves a full line. It does not clear automatically: the developer must press Confirm - Clear line.”
-
-**1:05-1:20 - Show the confirmation and history**
-
-“After confirmation, the line clears and the action is stored in shared state. The finished feature remains available in Previous work, so the current tab stays focused on what still needs attention.”
-
-**1:20-1:30 - Explain the build**
-
-“I built the plugin with Codex and used GPT-5.6 for milestone decomposition and state summaries. The repository includes the MCP bridge, native UI, deterministic placement algorithm, and smoke tests.”
-
-## Additional info for judges and organizers
-
-- Category: Developer Tools
-- Repository: https://github.com/orqan137/codex-tetris
-- Public demo: none; use the repository's local harness or install the native Codex plugin.
-- `/feedback` Session ID: `[PASTE THE PRIMARY CODEX SESSION ID HERE]`
-- Supported path: Codex plugin host for the native panel; Node.js 20+ for the local harness.
-- Test command: `node scripts/smoke-test.mjs` (the test uses a temporary state path when run in a restricted environment).
-- No credentials are required for the local harness.
-
-## Final checklist
+## Final submission checklist
 
 - [ ] Replace the YouTube placeholder with a public video under three minutes.
+- [ ] Make sure the voiceover explains what was built and how Codex and GPT-5.6 were used.
 - [ ] Paste the primary `/feedback` Session ID.
-- [ ] Add the repository URL to both public and judge-only fields where requested.
-- [ ] Upload both media files.
-- [ ] Confirm the README documents Codex and GPT-5.6 usage.
+- [ ] Confirm the repository is public, or grant access to `testing@devpost.com` and `build-week-event@openai.com` if it is private.
+- [ ] Verify that the README includes setup instructions and the Codex/GPT-5.6 usage explanation.
+- [ ] Upload both gallery images.
 - [ ] Add all team members and confirm their invitations.
-- [ ] Select Developer Tools and submit the saved form.
+- [ ] Select **Developer Tools**.
+- [ ] Accept the terms and submit the form rather than leaving it as a draft.
