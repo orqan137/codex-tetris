@@ -5,7 +5,7 @@ description: Track the user's requested features in native Goal Tetris boards in
 
 # Goal Tetris workflow
 
-Goal Tetris is a visual session companion, not a pet and not a raw log viewer. The plugin renders a native embedded Codex panel through the MCP UI resource `ui://goal-tetris/board.v7.html`. Each user-requested feature gets its own classic 10x20 Tetris map. Meaningful milestones become deterministic tetrominoes:
+Goal Tetris is a visual session companion, not a pet and not a raw log viewer. The plugin renders a native embedded Codex panel through the MCP UI resource `ui://goal-tetris/board.v9.html`. Each user-requested feature gets its own classic 10x20 Tetris map. Meaningful milestones become deterministic tetrominoes that fall through a collision-aware route queue:
 
 - `planning` -> S
 - `frontend` -> T
@@ -13,6 +13,8 @@ Goal Tetris is a visual session companion, not a pet and not a raw log viewer. T
 - `testing` -> I
 - `review` -> O
 - `approval` -> Z
+
+The board follows the actual Tetris coordinate model: pieces spawn above the visible stack, move downward until the next step would collide, and lock at the lowest legal position. Placement scoring prefers fewer holes, lower stack height, and a smoother surface, with a stable route-column tie breaker. Pending milestones do not render, and adding a later milestone does not move already locked pieces.
 
 ## Start of a Codex conversation
 
@@ -30,6 +32,6 @@ Include a short `summary` and `rationale`. These are user-facing explanations of
 
 When the user asks for the current state, call `goal_tetris_snapshot`. The native panel can refresh its state by calling this tool through the host UI bridge.
 
-When the user communicates in Korean, keep milestone summaries and next actions in Korean. The embedded panel automatically localizes its chrome labels when the host locale is Korean.
+When the user communicates in Korean, keep milestone summaries and next actions in Korean. The embedded panel's chrome is English by default; user-written Korean content is preserved.
 
 The plugin uses explicit milestone calls because passive access to undocumented private Codex session events is not guaranteed. The local dashboard is only a fallback visual harness for development; it is not the primary product surface.
