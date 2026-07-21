@@ -60,7 +60,7 @@ OpenAI Codex, GPT-5.6, Model Context Protocol (MCP), Codex native UI, Node.js, J
 
 ## Try it out links
 
-- Source repository: https://github.com/orqan137/codex-tetris
+- Source repository: https://github.com/orqan137/goal-tetris
 - Public demo video: `[PASTE PUBLIC YOUTUBE URL HERE]`
 
 ## Project media
@@ -85,7 +85,7 @@ I built the plugin with Codex and used GPT-5.6 for milestone decomposition, conc
 ## Additional information for judges and organizers
 
 - **Category:** Developer Tools
-- **Repository URL:** https://github.com/orqan137/codex-tetris
+- **Repository URL:** https://github.com/orqan137/goal-tetris
 - **Primary `/feedback` Session ID:** `[PASTE THE PRIMARY CODEX SESSION ID HERE]`
 - **Native plugin path:** Load the repository as a local Codex plugin. The repository root contains `.codex-plugin/plugin.json` and `.mcp.json`.
 - **Native resource:** `ui://goal-tetris/board.v10.html`
@@ -95,8 +95,8 @@ I built the plugin with Codex and used GPT-5.6 for milestone decomposition, conc
 ### Local visual-testing path
 
 ```bash
-git clone https://github.com/orqan137/codex-tetris.git
-cd codex-tetris
+git clone https://github.com/orqan137/goal-tetris.git
+cd goal-tetris
 npm install
 npm start
 ```
