@@ -5,7 +5,7 @@ description: Track the user's requested features in native Goal Tetris boards in
 
 # Goal Tetris workflow
 
-Goal Tetris is a visual session companion, not a pet and not a raw log viewer. The plugin renders a native embedded Codex panel through the MCP UI resource `ui://goal-tetris/board.v2.html`. Each user-requested feature gets its own Tetris map. Meaningful milestones become deterministic tetrominoes:
+Goal Tetris is a visual session companion, not a pet and not a raw log viewer. The plugin renders a native embedded Codex panel through the MCP UI resource `ui://goal-tetris/board.v10.html`. Each user-requested feature gets its own classic 10x20 Tetris map. Meaningful milestones become deterministic tetrominoes that fall through a collision-aware route queue. On first open, the panel requests a fresh session snapshot when the host has not supplied initial tool output, ensuring the board is populated immediately:
 
 - `planning` -> S
 - `frontend` -> T
@@ -13,6 +13,8 @@ Goal Tetris is a visual session companion, not a pet and not a raw log viewer. T
 - `testing` -> I
 - `review` -> O
 - `approval` -> Z
+
+The board follows the actual Tetris coordinate model: pieces spawn above the visible stack, move downward until the next step would collide, and lock at the lowest legal position. Placement scoring prefers fewer holes, lower stack height, and a smoother surface, with a stable route-column tie breaker. Pending milestones do not render, and adding a later milestone does not move already locked pieces.
 
 ## Start of a Codex conversation
 
@@ -24,10 +26,12 @@ When the user asks to track a new feature, call `goal_tetris_start` once. Use GP
 
 After a meaningful state change, call `goal_tetris_update` with the board's `goalId`, the milestone's `milestoneId`, and one of `active`, `completed`, `blocked`, or `approval`. Do not call it for every shell command or file edit. Prefer milestones such as frontend complete, backend connected, tests passing, review complete, or approval needed.
 
+When every milestone on a board is completed, the native panel reserves and shows one full bottom line. The developer must press the confirmation button before calling `goal_tetris_acknowledge`; this removes the line and records the acknowledgement. Do not claim a line was cleared before the user confirms it.
+
 Include a short `summary` and `rationale`. These are user-facing explanations of the decision and evidence, not hidden chain-of-thought. Never expose private chain-of-thought; provide concise summaries, evidence, blockers, and next actions instead.
 
 When the user asks for the current state, call `goal_tetris_snapshot`. The native panel can refresh its state by calling this tool through the host UI bridge.
 
-When the user communicates in Korean, keep milestone summaries and next actions in Korean. The embedded panel automatically localizes its chrome labels when the host locale is Korean.
+When the user communicates in Korean, keep milestone summaries and next actions in Korean. The embedded panel's chrome is English by default; user-written Korean content is preserved.
 
 The plugin uses explicit milestone calls because passive access to undocumented private Codex session events is not guaranteed. The local dashboard is only a fallback visual harness for development; it is not the primary product surface.

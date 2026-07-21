@@ -15,7 +15,7 @@ async function httpSmokeTest() {
     const created = await fetch("http://localhost:4173/api/goals", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ title: "Login functionality", milestones: [{ title: "Build the frontend", kind: "frontend" }, { title: "Connect the backend", kind: "backend" }, { title: "Run tests", kind: "testing" }] })
+      body: JSON.stringify({ title: "Smoke login functionality", milestones: [{ title: "Build the frontend", kind: "frontend" }, { title: "Connect the backend", kind: "backend" }, { title: "Run tests", kind: "testing" }] })
     });
     if (!created.ok) throw new Error("Dashboard goal creation failed");
     const state = await (await fetch("http://localhost:4173/api/state")).json();
@@ -54,13 +54,20 @@ async function mcpSmokeTest() {
     const initialized = await mcpRequest(server, { jsonrpc: "2.0", id: 1, method: "initialize", params: {} });
     if (!initialized.serverInfo) throw new Error("MCP initialize failed");
     const listed = await mcpRequest(server, { jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
-    if (listed.tools.length !== 5) throw new Error("MCP tool list is incomplete");
+    if (listed.tools.length !== 6) throw new Error("MCP tool list is incomplete");
     const opened = await mcpRequest(server, { jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "goal_tetris_open", arguments: { sessionLabel: "Smoke Codex session" } } });
-    if (opened.structuredContent?.session?.label !== "Smoke Codex session" || opened._meta?.["ui.resourceUri"] !== "ui://goal-tetris/board.v2.html") throw new Error("MCP native panel attach failed");
-    const resource = await mcpRequest(server, { jsonrpc: "2.0", id: 4, method: "resources/read", params: { uri: "ui://goal-tetris/board.v2.html" } });
-    if (!resource.contents?.[0]?.text?.includes("Feature progress") || resource.contents[0].text.includes("localhost:4173")) throw new Error("Native widget resource is incomplete");
+    if (opened.structuredContent?.session?.label !== "Smoke Codex session" || opened._meta?.["ui.resourceUri"] !== "ui://goal-tetris/board.v10.html") throw new Error("MCP native panel attach failed");
+    const resource = await mcpRequest(server, { jsonrpc: "2.0", id: 4, method: "resources/read", params: { uri: "ui://goal-tetris/board.v10.html" } });
+    if (!resource.contents?.[0]?.text?.includes("Goal Tetris") || !resource.contents[0].text.includes("arcade-theme") || !resource.contents[0].text.includes("completion-line") || !resource.contents[0].text.includes("confirm-clear") || !resource.contents[0].text.includes("goal_tetris_acknowledge") || !resource.contents[0].text.includes("data-view=\"history\"") || !resource.contents[0].text.includes("landingY") || !resource.contents[0].text.includes("next-preview") || resource.contents[0].text.includes("01:11") || resource.contents[0].text.includes("localhost:4173")) throw new Error("Native widget resource is incomplete");
     const started = await mcpRequest(server, { jsonrpc: "2.0", id: 5, method: "tools/call", params: { name: "goal_tetris_start", arguments: { title: "Smoke goal", milestones: [{ title: "Frontend", kind: "frontend" }] } } });
     if (!started.structuredContent?.goals?.[0]?.id || started.structuredContent?.session?.label !== "Smoke Codex session") throw new Error("MCP goal creation failed");
+    const smokeGoal = started.structuredContent.goals.at(-1);
+    const goalId = smokeGoal.id;
+    const milestoneId = smokeGoal.milestones[0].id;
+    const completed = await mcpRequest(server, { jsonrpc: "2.0", id: 6, method: "tools/call", params: { name: "goal_tetris_update", arguments: { goalId, milestoneId, status: "completed", summary: "Smoke milestone complete" } } });
+    if (completed.structuredContent?.goals?.find((goal) => goal.id === goalId)?.status !== "completed") throw new Error("MCP completion state failed");
+    const acknowledged = await mcpRequest(server, { jsonrpc: "2.0", id: 7, method: "tools/call", params: { name: "goal_tetris_acknowledge", arguments: { goalId } } });
+    if (!acknowledged.structuredContent?.goals?.find((goal) => goal.id === goalId)?.lineAcknowledgedAt) throw new Error("MCP line acknowledgement failed");
     return "mcp: passed";
   } finally {
     server.kill();
