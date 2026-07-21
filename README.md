@@ -8,7 +8,7 @@ Goal Tetris is a native Codex plugin for the OpenAI Build Week Developer Tools t
 
 ## Native Codex experience
 
-The primary product surface is the embedded MCP UI resource `ui://goal-tetris/board.v5.html`: a compact, playful panel that renders each milestone as a labeled pastel tetromino, lets one Codex session switch between multiple feature boards, keeps completed work under an “이전 작업” tab, and clears completed rows with a Tetris-style line animation. There is no pet and no browser window in the plugin experience.
+The primary product surface is the embedded MCP UI resource `ui://goal-tetris/board.v7.html`: a classic blue arcade-style 10x20 Tetris panel with square cells, canonical I/J/L/O/S/T/Z tetromino colors, one-shot falling motion for active work, and a confirmation-gated completed line. One Codex session can switch between multiple feature boards, while completed work moves to the previous-work tab. There is no pet and no browser window in the plugin experience.
 
 The plugin flow is:
 
@@ -16,14 +16,16 @@ The plugin flow is:
 2. `goal_tetris_start` creates one board for each requested feature.
 3. `goal_tetris_update` locks a shape when a meaningful milestone changes.
 4. `goal_tetris_snapshot` refreshes all boards.
+5. When a board is complete, the developer presses `Confirm · Clear line`; the panel calls `goal_tetris_acknowledge` and removes the completed row.
 
 ## What works
 
 - Multiple feature boards in one native panel
 - Right-side task picker for switching between boards in the same Codex session
 - Separate current-work and previous-work tabs; completed boards move to history automatically
-- Deterministic shapes for planning, frontend, backend, testing, review, and approval
-- Animated block drops when a milestone becomes active or completed
+- Classic square tetrominoes with deterministic I/J/L/O/S/T/Z shapes and colors
+- One-shot falling motion for active work; completed pieces remain locked
+- A completed bottom line that stays visible until the developer confirms it
 - Shared state bridge between the native panel and the MCP server
 - Explicit Codex instructions for opening, creating, and updating boards
 - Korean UI mode when the Codex locale or browser locale starts with `ko`

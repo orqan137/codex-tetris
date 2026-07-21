@@ -1,5 +1,5 @@
 import readline from "node:readline";
-import { attachSession, createGoal, readState, resetState, updateMilestone } from "../lib/state.mjs";
+import { acknowledgeGoal, attachSession, createGoal, readState, resetState, updateMilestone } from "../lib/state.mjs";
 import { RESOURCE_URI, widgetHtml } from "./widget.mjs";
 
 const PROTOCOL_VERSION = "2024-11-05";
@@ -62,6 +62,15 @@ const tools = [
     inputSchema: { type: "object", properties: {} }
   },
   {
+    name: "goal_tetris_acknowledge",
+    description: "Confirm a completed Tetris line and remove it from the board.",
+    inputSchema: {
+      type: "object",
+      properties: { goalId: { type: "string" } },
+      required: ["goalId"]
+    }
+  },
+  {
     name: "goal_tetris_reset",
     description: "Clear all Goal Tetris boards for a fresh demo.",
     inputSchema: { type: "object", properties: {} }
@@ -97,6 +106,10 @@ async function callTool(name, args = {}) {
     return result(await readState(), `Goal Tetris updated: ${update.milestone.title} - ${update.milestone.status}`);
   }
   if (name === "goal_tetris_snapshot") return result(await readState(), "Current Goal Tetris snapshot");
+  if (name === "goal_tetris_acknowledge") {
+    const goal = await acknowledgeGoal(args);
+    return result(await readState(), `Goal Tetris line cleared: ${goal.title}`);
+  }
   if (name === "goal_tetris_reset") return result(await resetState(), "Goal Tetris boards reset");
   throw new Error(`Unknown tool: ${name}`);
 }
