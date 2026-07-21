@@ -15,7 +15,7 @@ async function httpSmokeTest() {
     const created = await fetch("http://localhost:4173/api/goals", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ title: "Login functionality", milestones: [{ title: "Build the frontend", kind: "frontend" }, { title: "Connect the backend", kind: "backend" }, { title: "Run tests", kind: "testing" }] })
+      body: JSON.stringify({ title: "Smoke login functionality", milestones: [{ title: "Build the frontend", kind: "frontend" }, { title: "Connect the backend", kind: "backend" }, { title: "Run tests", kind: "testing" }] })
     });
     if (!created.ok) throw new Error("Dashboard goal creation failed");
     const state = await (await fetch("http://localhost:4173/api/state")).json();
@@ -56,9 +56,9 @@ async function mcpSmokeTest() {
     const listed = await mcpRequest(server, { jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
     if (listed.tools.length !== 5) throw new Error("MCP tool list is incomplete");
     const opened = await mcpRequest(server, { jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "goal_tetris_open", arguments: { sessionLabel: "Smoke Codex session" } } });
-    if (opened.structuredContent?.session?.label !== "Smoke Codex session" || opened._meta?.["ui.resourceUri"] !== "ui://goal-tetris/board.v3.html") throw new Error("MCP native panel attach failed");
-    const resource = await mcpRequest(server, { jsonrpc: "2.0", id: 4, method: "resources/read", params: { uri: "ui://goal-tetris/board.v3.html" } });
-    if (!resource.contents?.[0]?.text?.includes("Goal Tetris") || !resource.contents[0].text.includes("well") || resource.contents[0].text.includes("localhost:4173")) throw new Error("Native widget resource is incomplete");
+    if (opened.structuredContent?.session?.label !== "Smoke Codex session" || opened._meta?.["ui.resourceUri"] !== "ui://goal-tetris/board.v5.html") throw new Error("MCP native panel attach failed");
+    const resource = await mcpRequest(server, { jsonrpc: "2.0", id: 4, method: "resources/read", params: { uri: "ui://goal-tetris/board.v5.html" } });
+    if (!resource.contents?.[0]?.text?.includes("Goal Tetris") || !resource.contents[0].text.includes("clear-line") || !resource.contents[0].text.includes("task-choice") || !resource.contents[0].text.includes("data-view=\"history\"") || resource.contents[0].text.includes("localhost:4173")) throw new Error("Native widget resource is incomplete");
     const started = await mcpRequest(server, { jsonrpc: "2.0", id: 5, method: "tools/call", params: { name: "goal_tetris_start", arguments: { title: "Smoke goal", milestones: [{ title: "Frontend", kind: "frontend" }] } } });
     if (!started.structuredContent?.goals?.[0]?.id || started.structuredContent?.session?.label !== "Smoke Codex session") throw new Error("MCP goal creation failed");
     return "mcp: passed";

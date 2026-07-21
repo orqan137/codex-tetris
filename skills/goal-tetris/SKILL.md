@@ -5,7 +5,7 @@ description: Track the user's requested features in native Goal Tetris boards in
 
 # Goal Tetris workflow
 
-Goal Tetris is a visual session companion, not a pet and not a raw log viewer. The plugin renders a native embedded Codex panel through the MCP UI resource `ui://goal-tetris/board.v3.html`. Each user-requested feature gets its own Tetris map. Meaningful milestones become deterministic tetrominoes:
+Goal Tetris is a visual session companion, not a pet and not a raw log viewer. The plugin renders a native embedded Codex panel through the MCP UI resource `ui://goal-tetris/board.v5.html`. Each user-requested feature gets its own Tetris map. Meaningful milestones become deterministic tetrominoes:
 
 - `planning` -> S
 - `frontend` -> T

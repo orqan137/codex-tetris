@@ -2,8 +2,8 @@
   "mcpServers": {
     "goal-tetris": {
       "command": "C:\\Users\\castle\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
-      "args": ["C:\\Users\\castle\\plugins\\goal-tetris\\mcp\\server.mjs"],
-      "cwd": "C:\\Users\\castle\\plugins\\goal-tetris",
+      "args": ["C:\\Users\\castle\\Desktop\\project\\devpost\\mcp\\server.mjs"],
+      "cwd": "C:\\Users\\castle\\Desktop\\project\\devpost",
       "tool_timeout_sec": 30
     }
   }
