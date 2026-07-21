@@ -1,6 +1,6 @@
 {
   "name": "goal-tetris",
-  "version": "0.1.0+codex.20260721180538",
+  "version": "0.1.0+codex.20260721183732",
   "description": "Turn Codex goals and milestones into animated, stackable Tetris boards.",
   "author": {
     "name": "Goal Tetris"

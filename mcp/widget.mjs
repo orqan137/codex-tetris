@@ -1,5 +1,5 @@
 // Bump the resource URI whenever the embedded panel changes so Codex reloads.
-export const RESOURCE_URI = "ui://goal-tetris/board.v9.html";
+export const RESOURCE_URI = "ui://goal-tetris/board.v10.html";
 
 export function widgetHtml() {
   return String.raw`<!doctype html>
@@ -73,8 +73,8 @@ export function widgetHtml() {
     return {pieces:pieces,line:line,lineReady:lineReady,acknowledged:acknowledged,done:(goal.milestones||[]).filter(function(m){return m.status==="completed"}).length};
   }
   function statusLabel(status){return status==="completed"?TXT.done:status==="active"?TXT.active:status==="blocked"?TXT.blocked:status==="approval"?TXT.approval:TXT.waiting}
-  function taskRow(milestone){var status=milestone.status||"pending",kind=shapeName(milestone);return '<div class="task '+esc(status)+'"><i class="task-icon shape-'+kind+'"></i><div><strong>'+esc(milestone.title)+'</strong><small>'+kind+' / '+esc(statusLabel(status))+'</small></div></div>}
-  function nextPreview(milestone,index){var status=milestone.status||"pending",kind=shapeName(milestone);return '<div class="next-preview '+esc(status)+'"><i class="piece-icon shape-'+kind+'"></i><div><strong>'+esc(milestone.title)+'</strong><small>'+(index+1)+' / '+esc(statusLabel(status))+'</small></div></div>}
+  function taskRow(milestone){var status=milestone.status||"pending",kind=shapeName(milestone);return '<div class="task '+esc(status)+'"><i class="task-icon shape-'+kind+'"></i><div><strong>'+esc(milestone.title)+'</strong><small>'+kind+' / '+esc(statusLabel(status))+'</small></div></div>'}
+  function nextPreview(milestone,index){var status=milestone.status||"pending",kind=shapeName(milestone);return '<div class="next-preview '+esc(status)+'"><i class="piece-icon shape-'+kind+'"></i><div><strong>'+esc(milestone.title)+'</strong><small>'+(index+1)+' / '+esc(statusLabel(status))+'</small></div></div>'}
   function boardMarkup(goal){
     var view=layoutGoal(goal),milestones=goal.milestones||[],focus=milestones.find(function(m){return m.status==="active"||m.status==="blocked"||m.status==="approval"})||milestones.find(function(m){return m.status==="pending"}),action=view.lineReady?'<button class="confirm-clear" data-confirm-goal="'+esc(goal.id)+'">'+TXT.confirm+"</button>":view.acknowledged?'<span class="confirmed-note">'+TXT.cleared+"</span>":'<span>'+TXT.working+"</span>";
     return '<div class="selected-head"><div><span class="eyebrow">COMMAND ROUTE / 10 x 20 BOARD</span><h2>'+esc(goal.title)+'</h2><p>'+esc(goal.description||"Each routed milestone becomes one locked tetromino.")+'</p></div><span class="goal-status">'+esc(goal.status==="completed"?TXT.done:TXT.active)+'</span></div><div class="board-main"><div class="well">'+view.pieces+view.line+'</div><div class="todo"><div class="todo-title"><span>'+TXT.blocks+'</span><span>'+milestones.length+" / "+view.done+" "+TXT.locked+'</span></div>'+milestones.map(taskRow).join("")+'</div></div><div class="status-note"><span class="clear-note '+(view.lineReady?"":"none")+'">'+(view.lineReady?TXT.lineReady:(view.acknowledged?TXT.cleared:TXT.working))+'</span>'+action+'<span>'+TXT.next+": "+esc(focus?focus.title:TXT.done)+'</span></div>';
@@ -109,7 +109,15 @@ export function widgetHtml() {
     selected.querySelectorAll(".confirm-clear").forEach(function(button){button.addEventListener("click",function(){acknowledge(button.getAttribute("data-confirm-goal"),button)})});
   }
   async function refresh(){try{if(window.openai&&window.openai.callTool)render(await window.openai.callTool("goal_tetris_snapshot",{}));else render(window.openai&&window.openai.toolOutput)}catch(error){render(window.openai&&window.openai.toolOutput)}}
-  document.querySelectorAll(".tab").forEach(function(tab){tab.addEventListener("click",function(){currentView=tab.getAttribute("data-view");selectedId=null;render(latest)})});document.getElementById("refresh").addEventListener("click",refresh);render(window.openai&&window.openai.toolOutput);
+  async function bootstrap(){
+    var initial=window.openai&&window.openai.toolOutput;
+    try{
+      if(initial&&unwrap(initial).goals){render(initial);return}
+      if(window.openai&&typeof window.openai.callTool==="function"){render(await window.openai.callTool("goal_tetris_snapshot",{}));return}
+    }catch(error){}
+    render(initial);
+  }
+  document.querySelectorAll(".tab").forEach(function(tab){tab.addEventListener("click",function(){currentView=tab.getAttribute("data-view");selectedId=null;render(latest)})});document.getElementById("refresh").addEventListener("click",refresh);bootstrap();
 })();
 </script>
 </body>
